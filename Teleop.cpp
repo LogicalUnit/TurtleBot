@@ -136,7 +136,7 @@ void SensorArray::grayscalecamera_callback(const sensor_msgs::ImageConstPtr& msg
     cv::Mat croppedGray = grayFilter(croppedImg);
     std::vector<unsigned char> scanline = getGrayscaleLine(croppedGray, croppedGray.rows / 2); 
     grayCentroid_ = findBestCentroid(scanline);
-    //std::cout<<"Gray Centroid: "<<grayCentroid_<<std::endl; 
+//  std::cout<<"Gray Centroid: "<<grayCentroid_<<std::endl; 
     imshow("Kinect grayscale", croppedGray);
     cv::waitKey(20);		
 }
@@ -160,7 +160,7 @@ void SensorArray::depthcamera_callback(const sensor_msgs::ImageConstPtr& msg)
  
 void SensorArray::ekf_callback(const geometry_msgs::PoseWithCovarianceStampedPtr& msg)
 {
-    //std::cout<<"ekf callback"<<std::endl;
+//  std::cout<<"ekf callback"<<std::endl;
     x_ = msg->pose.pose.position.x;
     y_ = msg->pose.pose.position.y;
     orientation_ = msg->pose.pose.orientation.z;
