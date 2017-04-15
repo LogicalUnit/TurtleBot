@@ -37,146 +37,145 @@
 
 void output_range(SensorArray& sensors)
 {
-	std::cout<<"Outputting Range"<<std::endl;
-	
- 	while(true)
- 	{
- 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
- 		std::cout<<"Range: "<<sensors.getRangeMillimeters()<<std::endl;;
- 	}
+    std::cout<<"Outputting Range"<<std::endl;
+
+    while(true)
+    {
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+        std::cout<<"Range: "<<sensors.getRangeMillimeters()<<std::endl;;
+    }
 
 }
 
 void ellipse(TurtlebotTeleop& bot, SensorArray& sensors)
 {
-	std::cout<<"Starting Ellipse"<<std::endl;
-		
-	bot.setLinearVelocity(0.07);
-	bot.setAngularVelocity(0);
-	
-	while(true)
-	{
-		unsigned int grayScaleCentroid = sensors.getGrayCentroid();
-		
- 		std::cout<<"Gray Centroid: "<<grayScaleCentroid<<std::endl;
- 		
-		if (grayScaleCentroid < 300)
-		{
-			std::cout<<"Turning Left"<<std::endl;
-			bot.increaseAngular(0.005);
-		}	
-		else if (grayScaleCentroid > 340)
-		{
-			std::cout<<"Turning Right"<<std::endl;
-			bot.decreaseAngular(0.005);
-		}
-		else
-		{			
-			bot.setAngularVelocity(0);
-		}
-		boost::this_thread::sleep(boost::posix_time::milliseconds(100));		
-	}
+    std::cout<<"Starting Ellipse"<<std::endl;
+
+    bot.setLinearVelocity(0.07);
+    bot.setAngularVelocity(0);
+
+    while(true)
+    {
+        unsigned int grayScaleCentroid = sensors.getGrayCentroid();
+
+        std::cout<<"Gray Centroid: "<<grayScaleCentroid<<std::endl;
+
+        if (grayScaleCentroid < 300)
+        {
+            std::cout<<"Turning Left"<<std::endl;
+            bot.increaseAngular(0.005);
+        }	
+        else if (grayScaleCentroid > 340)
+        {
+            std::cout<<"Turning Right"<<std::endl;
+            bot.decreaseAngular(0.005);
+        }
+        else
+        {			
+            bot.setAngularVelocity(0);
+        }
+        
+        boost::this_thread::sleep(boost::posix_time::milliseconds(100));		
+    }
 }
 
 void ekf_stats(SensorArray& sensors)
 {
+    while(true)
+    {
 
+        double x = sensors.getX();
+        double y = sensors.getY();
+        double orient = sensors.getOrientation();
 
-	while(true)
-	{
-	
-		double x = sensors.getX();
-		double y = sensors.getY();
-		double orient = sensors.getOrientation();
-		
-		std::cout<<"x: "<<x<<" y: "<<y<<" orient: "<<orient<<std::endl;
-		
-/*		double theta = sensors.getTheta();
-  	std::cout<<"Theta: "<<theta<<std::endl;
+        std::cout<<"x: "<<x<<" y: "<<y<<" orient: "<<orient<<std::endl;
+
+/*
+    double theta = sensors.getTheta();
+    std::cout<<"Theta: "<<theta<<std::endl;
 */
-		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-	}
-	
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+    }	
 }
 
 void turn(TurtlebotTeleop& bot, SensorArray& sensors)
 {
-	double initial_angle = sensors.getOrientation();
-	bot.setAngularVelocity(0.2);
-	
-	while(sensors.getOrientation() < initial_angle + 2*3.141/4)
-	{
-		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-	}
-	
-	bot.stop();
+    double initial_angle = sensors.getOrientation();
+    bot.setAngularVelocity(0.2);
+
+    while(sensors.getOrientation() < initial_angle + 2*3.141/4) //Pi is stupid and wrong. Substituting tau = 2*pi makes trig so much easier!
+    {
+        boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+    }
+
+    bot.stop();
 
 }
 
 void colored_obstacles(TurtlebotTeleop& bot, SensorArray& sensors)
 {
-	while(true)
-	{
-		unsigned int redCentroid = sensors.getRedCentroid();
-		unsigned int blueCentroid = sensors.getBlueCentroid();
-		unsigned int greenCentroid = sensors.getGreenCentroid();
-//		unsigned short range = sensors.getRangeMillimeters();
-		
-		std::cout<<"Red Center: "<<redCentroid<<" Blue Center: "<<blueCentroid<<" Green Center: "<<greenCentroid<<std::endl;
-		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-	}
+    while(true)
+    {
+        unsigned int redCentroid = sensors.getRedCentroid();
+        unsigned int blueCentroid = sensors.getBlueCentroid();
+        unsigned int greenCentroid = sensors.getGreenCentroid();
+//	unsigned short range = sensors.getRangeMillimeters();
+
+        std::cout<<"Red Center: "<<redCentroid<<" Blue Center: "<<blueCentroid<<" Green Center: "<<greenCentroid<<std::endl;
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+    }
 }
 
 void print_range(SensorArray& sensors)
 {
-	while(true)
-	{
-		unsigned short range = sensors.getRangeMillimeters();
-		
-		std::cout<<"Range: "<<range<<std::endl;
-		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-	}
+    while(true)
+    {
+        unsigned short range = sensors.getRangeMillimeters();
+
+        std::cout<<"Range: "<<range<<std::endl;
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+    }
 }
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "turtlebot_teleop");
-  
-  static boost::once_flag cv_thread_flag = BOOST_ONCE_INIT;
-  boost::call_once(cv_thread_flag, &cv::startWindowThread);
-  
-  cv::namedWindow("Kinect reading");
+    ros::init(argc, argv, "turtlebot_teleop");
+
+    static boost::once_flag cv_thread_flag = BOOST_ONCE_INIT;
+    boost::call_once(cv_thread_flag, &cv::startWindowThread);
+
+    cv::namedWindow("Kinect reading");
 //  cv::namedWindow("Kinect red");
-//	cv::namedWindow("Kinect blue");
+//  cv::namedWindow("Kinect blue");
 //  cv::namedWindow("Kinect green");
-  cv::namedWindow("Kinect grayscale");
-//	cv::namedWindow("Kinect depth");
+    cv::namedWindow("Kinect grayscale");
+//  cv::namedWindow("Kinect depth");
+
+    TurtlebotTeleop bot;
+    SensorArray sensors;  
+    ros::NodeHandle n;
   
-  TurtlebotTeleop bot;
-	SensorArray sensors;  
-  ros::NodeHandle n;
   
-  
-//	  ros::Subscriber colour_sub = n.subscribe("/camera/rgb/image_color", 1, &SensorArray::rgbcamera_callback, &sensors);
-//usb_cam/image_raw
-//	  	  ros::Subscriber colour_sub = n.subscribe("/usb_cam/image_raw", 1, &SensorArray::rgbcamera_callback, &sensors);
-		ros::Subscriber grey_sub = n.subscribe("/usb_cam/image_raw", 1, &SensorArray::grayscalecamera_callback, &sensors);
-//		ros::Subscriber depth_sub = n.subscribe("/camera/depth/image_raw", 1, &SensorArray::depthcamera_callback, &sensors);
-//			ros::Subscriber imu_sub = n.subscribe("imu/data", 100, &SensorArray::imu_callback, &sensors);
-//		ros::Subscriber odom_sub = n.subscribe("odom", 100, &SensorArray::odom_callback, &sensors);
-//			ros::Subscriber ekf_sub = n.subscribe("/robot_pose_ekf/odom", 10, &SensorArray::ekf_callback, &sensors);
+//  ros::Subscriber colour_sub = n.subscribe("/camera/rgb/image_color", 1, &SensorArray::rgbcamera_callback, &sensors);
+//  usb_cam/image_raw
+//  ros::Subscriber colour_sub = n.subscribe("/usb_cam/image_raw", 1, &SensorArray::rgbcamera_callback, &sensors);
+    ros::Subscriber grey_sub = n.subscribe("/usb_cam/image_raw", 1, &SensorArray::grayscalecamera_callback, &sensors);
+//  ros::Subscriber depth_sub = n.subscribe("/camera/depth/image_raw", 1, &SensorArray::depthcamera_callback, &sensors);
+//  ros::Subscriber imu_sub = n.subscribe("imu/data", 100, &SensorArray::imu_callback, &sensors);
+//  ros::Subscriber odom_sub = n.subscribe("odom", 100, &SensorArray::odom_callback, &sensors);
+//  ros::Subscriber ekf_sub = n.subscribe("/robot_pose_ekf/odom", 10, &SensorArray::ekf_callback, &sensors);
 				
-		boost::thread ellipse_thread(boost::bind(ellipse, boost::ref(bot), boost::ref(sensors)));
-//  	boost::thread range_thread(boost::bind(output_range, boost::ref(sensors)));
-//			boost::thread ekf_thread(boost::bind(ekf_stats, boost::ref(sensors)));
- //   	boost::thread turn_thread(boost::bind(turn, boost::ref(bot), boost::ref(sensors)));
- //			boost::thread colors_thread(boost::bind(colored_obstacles, boost::ref(bot), boost::ref(sensors)));
-//			boost::thread range_thread(boost::bind(print_range, boost::ref(sensors)));
+    boost::thread ellipse_thread(boost::bind(ellipse, boost::ref(bot), boost::ref(sensors)));
+//  boost::thread range_thread(boost::bind(output_range, boost::ref(sensors)));
+//  boost::thread ekf_thread(boost::bind(ekf_stats, boost::ref(sensors)));
+//  boost::thread turn_thread(boost::bind(turn, boost::ref(bot), boost::ref(sensors)));
+//  boost::thread colors_thread(boost::bind(colored_obstacles, boost::ref(bot), boost::ref(sensors)));
+//  boost::thread range_thread(boost::bind(print_range, boost::ref(sensors)));
 
   
-  std::cout<<"Spinning ROS"<<std::endl;
-  ros::spin();
-  std::cout<<"Finishing ROS"<<std::endl;
+    std::cout<<"Spinning ROS"<<std::endl;
+    ros::spin();
+    std::cout<<"Finishing ROS"<<std::endl;
 
-  return 0;
+    return 0;
 }
