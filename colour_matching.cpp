@@ -227,7 +227,7 @@ unsigned int blobCentre(const std::vector<unsigned char>& pixels)
     //	std::cout<<"lower_bound: "<<lower_bound<<" upper_bound: "<<upper_bound<<std::endl;	
     }
 
-    //std::cout<<"best_lower: "<<best_lower<<" best upper: "<<best_upper<<std::endl;
+    //  std::cout<<"best_lower: "<<best_lower<<" best upper: "<<best_upper<<std::endl;
     return (best_upper + best_lower) / 2;
 
 }
